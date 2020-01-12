@@ -38,12 +38,12 @@ class Auth extends BD_Controller {
             $output['token'] = JWT::encode($token,$kunci); //This is the output token
             $output['id'] = $val->user_id;
             $output['name'] = $val->name;
-            $output['role'] = $val->role;
+            $output['role'] = $val->roleID;
 
             $sess_array = array(
                 'id' => $val->user_id,
                 'username' => $val->username,
-                'role' => (int)$val->role,
+                'role' => (int)$val->roleID,
                 'name' => $val->name,
                 'isLoggedIn' => TRUE
             );
