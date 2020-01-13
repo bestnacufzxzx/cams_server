@@ -32,7 +32,14 @@ class Room_model extends CI_Model {
         $this->db->like('roomID',$roomID);
         $result = $this->db->get($this->tbl_name);
         return $result->result();
+    }
 
+    function get_class_room($classID){
+        $this->db->from($this->tbl_name);
+        $this->db->join('class', 'room.roomID = class.roomID');
+        $this->db->where('class.classID', $classID);
+        $query = $this->db->get();
+        return $query->row();
     }
 
 }

@@ -86,22 +86,58 @@
             return $result->result();
         }
 
-        function posthistorydata($classID, $userID){
+        function posthistorydata($courseID, $studentID){
                 // $this->db->select("checkname.checknameID, checkname.datetime, checkname.status");
                 $this->db->from('checkname');
                 $this->db->join('class', 'class.classID = checkname.classID');
                 $this->db->join('room','room.roomID = class.roomID');
                 $this->db->join('building','building.buildingID = room.buildingID');
-                //$this->db->group_by('checkname.classID');  
-                $this->db->where('checkname.classID' ,$classID);
-                $this->db->where('checkname.studentID' ,$userID);
+                //$this->db->group_by('checkname.courseID');  
+                // $this->db->where('class.courseID' ,$courseID);
+                // $this->db->where('class.studentID' ,$studentID);
+                // $this->db->join('checkname', 'checkname.studentID = studentsregeter.studentID');
+                $this->db->join('courses', 'courses.courseID = class.courseID');
+                // $this->db->join('checkname', 'checkname.studentID = studentsregeter.studentID');
+                
 
-                // $this->db->join('coruse', 'coruse.classID = class.classID');
-                // $this->db->like('checkname.classID', $classID);
-                // $this->db->like('checkname.studentID', $studentID);
+                // $this->db->join('coruse', 'coruse.courseID = class.courseID');
+                $this->db->where('class.courseID', $courseID);
+                $this->db->where('checkname.studentID', $studentID);
                 
                 $result = $this->db->get();
                 return $result->result();
+            }
+
+            function totalPassCheckName($courseID, $studentID){
+                $this->db->select("count(checkname.status) as number");
+                $this->db->from('checkname');
+                $this->db->join('class', 'class.classID = checkname.classID');
+                $this->db->join('room','room.roomID = class.roomID');
+                $this->db->join('building','building.buildingID = room.buildingID');
+                //$this->db->group_by('checkname.courseID');  
+                // $this->db->where('class.courseID' ,$courseID);
+                // $this->db->where('class.studentID' ,$studentID);
+                // $this->db->join('checkname', 'checkname.studentID = studentsregeter.studentID');
+                $this->db->join('courses', 'courses.courseID = class.courseID');
+                // $this->db->join('checkname', 'checkname.studentID = studentsregeter.studentID');
+                
+
+                // $this->db->join('coruse', 'coruse.courseID = class.courseID');
+                $this->db->where('class.courseID', $courseID);
+                $this->db->where('checkname.studentID', $studentID);
+                $this->db->where_in('checkname.status', [1,2]);
+                
+                $result = $this->db->get();
+                return $result->row('number');
+            }
+
+            function totalCheckName($courseID){
+                $this->db->select("count(checkname.status) as number");
+                $this->db->from('checkname');
+                $this->db->join('class', 'class.classID = checkname.classID');
+                $this->db->where('class.courseID', $courseID);
+                $result = $this->db->get();
+                return $result->row('number');
             }
 
             function classbycourse($courseID){

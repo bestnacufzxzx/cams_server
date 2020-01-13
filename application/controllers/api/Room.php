@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Room extends API_Controller{
+class Room extends BD_Controller{
     function __construct()
     {    
         parent::__construct();
@@ -99,6 +99,21 @@ class Room extends API_Controller{
                     'message' => ''
                 ], REST_Controller::HTTP_CONFLICT);
             }
+        
+        /*error
+        $this->response([
+            'stetus' => false,
+            'massage' => $result
+        ], REST_Controller::HTTP_CONFLICT);*/
+    }
+
+    function get_class_room_get(){
+        $classID = $this->get('classID');
+        $result = $this->room_model->get_class_room($classID);
+        $this->response([
+            'status' => true,
+            'response' => $result
+        ], REST_Controller::HTTP_OK); 
         
         /*error
         $this->response([

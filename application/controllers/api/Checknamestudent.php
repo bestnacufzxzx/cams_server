@@ -31,10 +31,21 @@
         }
         
         function postHistoryChecknameByCourse_post(){
-            $classID = $this->post("classID");
-            $userID = $this->post("user_ID");
-            $result = $this->checknamestudent_model->posthistorydata($classID, $userID);
+            $courseID = $this->post("courseID");
+            $studentID = $this->post("user_ID");
+            $result = $this->checknamestudent_model->posthistorydata($courseID, $studentID);
             $this->response($result); 
+        }
+
+        function percent_check_name_post(){
+            $courseID = $this->post("courseID");
+            $studentID = $this->post("user_ID");
+            $number = $this->checknamestudent_model->totalPassCheckName($courseID, $studentID);
+            $total = $this->checknamestudent_model->totalCheckName($courseID);
+            $percent = [
+                'percent' => $number*100/$total
+            ];
+            $this->response($percent); 
         }
 
         function getcourse_get(){
@@ -111,11 +122,16 @@
            
             
         }
-        function getclassbycourses(){
-            $courseID = $this->get("courseID");
-            $classID = $this->get("classID");
-            $result = $this->checknamestudent_model->getclassbycoursesModel($courseID,$classID);
-            $this->response($result); 
-        }
+            function getclassbycourses(){
+                $courseID = $this->get("courseID");
+                $classID = $this->get("classID");
+                $result = $this->checknamestudent_model->getclassbycoursesModel($courseID,$classID);
+                $this->response($result); 
+            }
+
+            // function getshowhistory(){
+            //     $classID = $this->get("classID");
+
+            // }
     }
 ?>
