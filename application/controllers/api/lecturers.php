@@ -1,7 +1,7 @@
 <?php
     defined('BASEPATH') OR exit('No direct script access allowed');
 
-    class lecturers extends BD_Controller{
+    class Lecturers extends BD_Controller{
         
         function __construct()
         {
@@ -334,6 +334,60 @@
             $studentID = $this->get('studentID');
             $result = $this->lecturers_model->get_id_history_student_get_model($studentID,$courseID);
             $this->response($result);   
+        }
+
+        function import_post(){
+            $prefix = $this->post('prefix');
+            $firstName = $this->post('firstName');
+            $lastName = $this->post('lastName');
+            $email = $this->post('email');
+            $phoneNumber = $this->post('phoneNumber');
+            $user_id = $this->post('user_id');
+
+            $data = [
+                'prefix' => $prefix,
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'email' => $email,
+                'phoneNumber' => $phoneNumber,
+                'user_id' => $user_id,
+            ];
+        }
+
+        function import_lecturer_post(){
+            $lecturer = $this->post('lecturer');
+
+            $data = [];
+            foreach ($lecturer as $i => $v) {
+                $data['lecturer'][$i] = [
+                    'firstName' => $v['fname'],
+                    'lastName' => $v['lname'],
+                    'email' => $v['email'],
+                    'phoneNumber' => $v['tel'],
+                    'user_id' => ''
+                ];
+
+                $data['user'][$i] = [
+                    'username' => $v['username'],
+                    'password' => password_hash($this->post("password"), PASSWORD_BCRYPT),
+                    'roleID' => '3',
+                    'name' => $v['fname'].' '.$v['lname']
+                ];
+            }
+
+            $result = $this->lecturers_model->import_lecturer($data);
+            if ($result != null)
+            {
+                $this->response([
+                    'status' => true,
+                    'response' => $result
+                ], REST_Controller::HTTP_OK); 
+            }else{
+                $this->response([
+                    'status' => false,
+                    'message' => ''
+                ], REST_Controller::HTTP_CONFLICT);
+            }
         }
             
     }
