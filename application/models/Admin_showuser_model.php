@@ -7,15 +7,19 @@
 
        
         function showusername_teacher_model(){
-            $this->db->select('lecturerID, prefix, firstName, lastName, email, phoneNumber');
+            $this->db->select('lecturerID, prefix, firstName, lastName, email, user_id, phoneNumber');
             $result = $this->db->get($this->tbl_name);
             return $result->result();
         }
 
        // delete_lecturerid
-       function delete_lecturer($lecturerID){    
-            $this->db->where('lecturerID', $lecturerID); 
+        function delete_lecturer($user_id){    
+            $this->db->where('user_id', $user_id); 
             return $this->db->delete($this->tbl_name);  
+        }
+        function delete_befor_by_userid_lecturer($user_id){    
+            $this->db->where('user_id', $user_id); 
+            return $this->db->delete('users');  
         }
 
         function getBeforelecturerID_model($lecturerID){

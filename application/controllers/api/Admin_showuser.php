@@ -15,8 +15,10 @@
         }
 
         function get_delete_lecturerid_get(){
-            $lecturerID = $this->get('lecturerID');
-            $result = $this->admin_showuser_model->delete_lecturer($lecturerID);
+            $user_id = $this->get('user_id');
+            $result = $this->admin_showuser_model->delete_lecturer($user_id);
+            $result = $this->admin_showuser_model->delete_befor_by_userid_lecturer($user_id);
+
             // $this->response($result); 
             $this->response([
                 'status' => true,
