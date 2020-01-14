@@ -1,7 +1,7 @@
 <?php
     defined('BASEPATH') OR exit('No direct script access allowed');
 
-    class lecturers_model extends CI_Model{
+    class Lecturers_model extends CI_Model{
 
         private $tbl_name = "lecturers";
         const num = 0;
