@@ -36,36 +36,6 @@ class Reportfile extends BaseController {
                 $col++;
             }
 
-            // $months = array("","มกราคม ","กุมภาพันธ์ ","มีนาคม ","เมษายน ","พฤษภาคม ","มิถุนายน ","กรกฎาคม ","สิงหาคม ","กันยายน ","ตุลาคม ","พฤศจิกายน ","ธันวาคม ");
-            // $index = 0;
-            // for ($month=$start; $month <= $end ; $month++) { 
-
-            //     $obj->setActiveSheetIndex($index)->getColumnDimension('A')->setWidth(10); 
-            //     $obj->setActiveSheetIndex($index)->getColumnDimension('B')->setWidth(10); 
-            //     $obj->setActiveSheetIndex($index)->getColumnDimension('C')->setWidth(10); 
-            //     $obj->setActiveSheetIndex($index)->getColumnDimension('D')->setWidth(30);
-        
-            //     $obj->setActiveSheetIndex($index)
-            //             ->setCellValue('A1', 'คาบ')->setCellValue('B1', 'อาคารเรียน')
-            //             ->setCellValue('C1', 'สถานะเข้าเรียน')->setCellValue('D1', 'เปอร์เซ็นการเข้าเรียน');
-                
-            //     $data = $this->checknamestudent_model->posthistorydata($courseID, $studentID);
-            //     $col = 2;
-            //     foreach ($data as $key => $row) {
-            //         $wqi = calculateWqi($row->val1, $row->val2, $row->val3, $row->val4, $row->val5, $row->val6, $row->val7, $row->val8);
-            //         $obj->setActiveSheetIndex($index)
-            //             ->setCellValue('A'.$col, $key+1)->setCellValue('B'.$col, $buildingName)
-            //             ->setCellValue('C'.$col, $status)->setCellValue('N'.$col, $row->result);
-            //         $col++;
-            //     }
-
-                // $obj->getActiveSheet()->setTitle($months[$month]);
-                // if($month != $end){
-                //     $obj->createSheet();
-                // }
-            //     $index++;
-            // }
-
             
             $obj->setActiveSheetIndex(0);
 
