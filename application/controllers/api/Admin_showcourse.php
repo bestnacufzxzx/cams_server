@@ -77,29 +77,32 @@
         }
 
         function admin_importcourse_post($data){
-            $data = $this->post('data');
+              $course = $this->post('course');
+
+            //   courseCode: '',
+            //   courseName: '',
             $data = [];
-            foreach ($data as $key => $row) {
-                $data[$key]["courses"] = array(
-                    'courseCode' => !empty($row[0]) ? $row[0] : '',
-                    'courseName' => !empty($row[1]) ? $row[1] : '',
-                );
+            foreach ($course as $i => $v) {
+                $data['course'][$i] = [
+                    'courseCode' => $v['courseCode'],
+                    'courseName' => $v['courseName'],
+                    'roleID' => null
+                ];
             }
-    
-            // $result = $this->admin_showcourse_model->import($data);
-    
-            // if (is_array($result)) {
-            //     $this->response([
-            //         'status' => true,
-            //         'response' => $result,
-            //         'message' => 'บันทึกสำเร็จ'
-            //     ],REST_Controller::HTTP_OK);
-            // } else {
-            //     $this->response([
-            //         'status' => false,
-            //         'message' => "เกิดข้อผิดพลาดในการบันทึก"
-            //     ], REST_Controller::HTTP_CONFLICT);
-            // }
+
+            $result = $this->courses_model->import_course($data);
+            if ($result != null)
+            {
+                $this->response([
+                    'status' => true,
+                    'response' => $result
+                ], REST_Controller::HTTP_OK); 
+            }else{
+                $this->response([
+                    'status' => false,
+                    'message' => ''
+                ], REST_Controller::HTTP_CONFLICT);
+            }
         }
 
         function showusername_teacher_get(){

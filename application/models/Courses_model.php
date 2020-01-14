@@ -35,4 +35,26 @@ class Courses_model extends CI_Model {
 
     }
 
+    function import_course(){
+        $this->db->trans_begin();
+
+        foreach ($data['user'] as $i => $v) {
+            $this->db->insert('users', $v);
+            $user_id = $this->db->insert_id();
+            $data['lecturer'][$i]['user_id'] = $user_id;
+            $this->db->insert('lecturers',  $data['lecturer'][$i]);
+        }
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return false;
+        }
+        else
+        {
+            $this->db->trans_commit();
+            return true;
+        }
+    }
+
 }

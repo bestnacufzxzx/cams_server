@@ -35,4 +35,25 @@ class Students_model extends CI_Model {
 
     }
 
+    function import_student($data){
+        $this->db->trans_begin();
+        foreach ($data['user'] as $i => $v) {
+            $this->db->insert('users', $v);
+            $user_id = $this->db->insert_id();
+            $data['student'][$i]['user_id'] = $user_id;
+            $this->db->insert('students',  $data['student'][$i]);
+        }
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return false;
+        }
+        else
+        {
+            $this->db->trans_commit();
+            return true;
+        }
+    }
+
 }
