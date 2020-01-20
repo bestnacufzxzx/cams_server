@@ -56,12 +56,40 @@
             return $result->result();
         }
 
-        function postChecknamedata_time($classID){
-            $this->db->select("class.starttime, class.endtime, class.startdate, class.startcheck, class.endcheck");
+        function postCheckstarttime_time($classID){
+            $this->db->select("class.starttime");
             $this->db->from('class');
             $this->db->where('classID', $classID);
             $result = $this->db->get();
-            return $result->result();
+            return $result->row('starttime');
+        }
+        function postCheckendtime_time($classID){
+            $this->db->select("class.endtime");
+            $this->db->from('class');
+            $this->db->where('classID', $classID);
+            $result = $this->db->get();
+            return $result->row('endtime');
+        }
+        function postCheckstartdate_time($classID){
+            $this->db->select("class.startdate");
+            $this->db->from('class');
+            $this->db->where('classID', $classID);
+            $result = $this->db->get();
+            return $result->row('startdate');
+        }
+        function postCheckstartcheck_time($classID){
+            $this->db->select("class.startcheck");
+            $this->db->from('class');
+            $this->db->where('classID', $classID);
+            $result = $this->db->get();
+            return $result->row('startcheck');
+        }
+        function postCheckendcheck_time($classID){
+            $this->db->select("class.endcheck");
+            $this->db->from('class');
+            $this->db->where('classID', $classID);
+            $result = $this->db->get();
+            return $result->row('endcheck');
         }
 
         function insert($data){

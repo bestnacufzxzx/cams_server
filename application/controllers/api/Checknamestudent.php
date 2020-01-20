@@ -61,8 +61,30 @@
             $this->response($result);
         }
 
+        function postgettest_post(){
+            // $data = date('H:i:s',time());
+            $classID = $this->post("classID");
+            $starttime = $this->checknamestudent_model->postCheckstarttime_time($classID);
+            $endtime = $this->checknamestudent_model->postCheckendtime_time($classID);
+            $startdate = $this->checknamestudent_model->postCheckstartdate_time($classID);
+            $startcheck = $this->checknamestudent_model->postCheckstartcheck_time($classID);
+            $endcheck = $this->checknamestudent_model->postCheckendcheck_time($classID);
+
+            $datetime = [
+                'starttime' => $starttime,
+                'endtime' => $endtime,
+                'startdate' => $startdate, 
+                'startcheck' => $startcheck, 
+                'endcheck' => $endcheck
+            ];
+            $this->response($datetime); 
+
+        }
+
         function postCheckname_post(){
             $data = date('Y-m-d H:i:s',time());
+            $data2 = date('H:i:s',time());
+
             $classID = $this->post("classID");
             $studentID = $this->post("studentID");
             $latitude = $this->post("latitude");
@@ -71,12 +93,18 @@
             // $data_check = $this->checknamestudent_model->postChecknamedata($studentID);
             // $data_check_time = $this->checknamestudent_model->postChecknamedata_time($classID);
             // if($data_check_time <= ){}
-            $data_check_time = $this->checknamestudent_model->postChecknamedata_time($classID);
+            // $data_check_time = $this->checknamestudent_model->postChecknamedata_time($classID);
+
+            $starttime = $this->checknamestudent_model->postCheckstarttime_time($classID);
+            $endtime = $this->checknamestudent_model->postCheckendtime_time($classID);
+            $startdate = $this->checknamestudent_model->postCheckstartdate_time($classID);
+            $startcheck = $this->checknamestudent_model->postCheckstartcheck_time($classID);
+            $endcheck = $this->checknamestudent_model->postCheckendcheck_time($classID);
             
-            if($data >= $data_check_time['startcheck'] && $data <= $data_check_time['endcheck'])
+            if($data2 >= $startcheck && $data2 <= $endcheck)
             {
                 $statusupdatebystudent = "1";
-            }else if ($data >= $data_check_time['endcheck'] && $data <= $data_check_time['endtime'])
+            }else if ($data2 >= $endcheck && $data2 <= $endtime)
             {
                 $statusupdatebystudent = "2";
             }else{
