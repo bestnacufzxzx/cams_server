@@ -75,7 +75,7 @@
                 'courseID' => $courseID,
                 'roleID' => $roleID,
             ];
-            $result = $this->admin_teaching_model->update_teaching_model($data);
+            // $result = $this->admin_teaching_model->update_teaching_model($data);
             $result = $this->admin_teaching_model->insert($courseID,$lecturerID,$roleID);
 
             $this->response([
