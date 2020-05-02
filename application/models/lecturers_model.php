@@ -73,7 +73,16 @@
             return $result->result();
         }
 
-        function getCourseByteachingModel($lecturerID){
+        function getCourseByteachingModel($lecturerID,$roleID){
+            $this->db->from('teaching');
+            $this->db->join('courses', 'courses.courseID = teaching.courseID');
+            $this->db->where('teaching.lecturerID', $lecturerID);
+            $this->db->where('teaching.roleID', $roleID);
+            $result = $this->db->get();
+            return $result->result();
+        }
+
+        function getCourseByteachingNoRolemodel($lecturerID){
             $this->db->from('teaching');
             $this->db->join('courses', 'courses.courseID = teaching.courseID');
             $this->db->where('teaching.lecturerID', $lecturerID);
@@ -110,18 +119,38 @@
         function insert_createcouresbylecturer_model($data){
             return $this->db->insert('teaching', $data);
         }
-
+        // เพิ่มตัวเซ็คข้อมูลซ้ำ
+        function chackdatabeforinsertdatacreatecouresbylecturer($courseID,$lecturerID,$roleID){
+            $this->db->from('teaching');
+            $this->db->where('courseID', $courseID);
+            $this->db->where('lecturerID', $lecturerID);
+            $this->db->where('roleID', $roleID);
+            $result = $this->db->get();
+            if(empty( $result->result() )){
+                return false; 
+            }else{
+                return true; 
+            }
+        }
+        // เพิ่มกำหนดการเรียนการสอน
         function insertdatacreatecouresbylecturer($data){
             return $this->db->insert('teaching', $data);
         }
-
-        function chackdatacreateclassbyTeachs($courseID,$starttime,$roomID){
+        // เพิ่มตัวเซ็คข้อมูลซ้ำ
+        function chackdatacreateclassbyTeachs($courseID,$starttime,$roomID,$startdate){
                 $this->db->from('class');
                 $this->db->where('courseID', $courseID);
                 $this->db->where('starttime', $starttime);
                 $this->db->where('roomID', $roomID);
+                $this->db->where('startdate', $startdate);
+                // $result = $this->db->get();
+                // return $result->result();
                 $result = $this->db->get();
-                return $result->result();
+                if(empty( $result->result() )){
+                    return false; 
+                }else{
+                    return true; 
+                }
         }
 
         function insertdatacreateclassbyTeachs($data){

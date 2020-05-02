@@ -93,7 +93,14 @@
 
         function getCourseByteaching_get(){
             $lecturerID = $this->get('lecturerID');
-            $result = $this->lecturers_model->getCourseByteachingmodel($lecturerID);
+            $roleID = $this->get('roleID');
+            $result = $this->lecturers_model->getCourseByteachingmodel($lecturerID,$roleID);
+            $this->response($result);      
+        }
+
+        function getCourseByteachingNoRole_get(){
+            $lecturerID = $this->get('lecturerID');
+            $result = $this->lecturers_model->getCourseByteachingNoRolemodel($lecturerID);
             $this->response($result);      
         }
 
@@ -104,20 +111,32 @@
             $this->response($result); 
         }
 
+        // เพิ่มตัว เช็ครายชื่อวิชาซ้ำที่จะนำเข้า
         // insert กำหนดการเรียนการสอน
         function createcouresbylecturer_post(){
-            $teachingID = $this->post('teachingID');
+            // $teachingID = $this->post('teachingID');
             $courseID = $this->post('courseID');
             $lecturerID = $this->post('lecturerID');
-            // $roleID = $this->post('roleID');
+            $roleID = $this->post('roleID');
             $data = array(
-                "teachingID" => $teachingID,
+                // "teachingID" => $teachingID,
                 "courseID"=> $courseID,
                 "lecturerID" => $lecturerID,
-                // "roleID" => $roleID,
+                "roleID" => $roleID,
             );
-            $result = $this->lecturers_model->insertdatacreatecouresbylecturer($data);
+            $datachack = $this->lecturers_model->chackdatabeforinsertdatacreatecouresbylecturer($courseID,$lecturerID,$roleID);
+            if( $datachack == true){
+                $result =   $this->response([
+                            'status' => false,
+                            'message' => ''
+                            ], REST_Controller::HTTP_CONFLICT);
+            }else{
+                $result = $this->lecturers_model->insertdatacreatecouresbylecturer($data);
+            }         
             $this->response($result); 
+
+            // $result = $this->lecturers_model->insertdatacreatecouresbylecturer($data);
+            // $this->response($result); 
             
         }
 
@@ -138,7 +157,13 @@
             $startcheck = $this->post('startcheck');
             $endcheck = $this->post('endcheck');
 
-            $resultchackdate = $this->lecturers_model->chackdatacreateclassbyTeachs($courseID,$starttime,$roomID);
+            $resultchackdate = $this->lecturers_model->chackdatacreateclassbyTeachs($courseID,$starttime,$roomID,$startdate);
+            if( $resultchackdate == true){
+                $result =   $this->response([
+                            'status' => false,
+                            'message' => 'เวลาจองห้องซ้ำ'
+                            ], REST_Controller::HTTP_CONFLICT);
+            }else{
             // if(!$resultchackdate == $courseID && !$resultchackdate == $roomID){
                 $data = array(
                     "courseID"=> $courseID,
@@ -158,7 +183,7 @@
             //         'status' => false,
             //         'message' => ''
             //     ], REST_Controller::HTTP_CONFLICT);
-            // }
+            }
 
             
         }
