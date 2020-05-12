@@ -16,6 +16,11 @@
             $this->response($result); 
         }
 
+        function showaccountuserteacher_get(){
+            $result = $this->admin_accountUser_model->showaccountuserteacher_model();
+            $this->response($result); 
+        }
+
         // get update
         function getBeforeaccountUser_get(){
             $user_id = $this->get('user_id');

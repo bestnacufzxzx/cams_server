@@ -114,25 +114,35 @@
             return $result->result();
         }
 
+        function getnamebystudentidmodle($studentID){
+            $this->db->select("students.firstName,students.lastName,students.prefix");
+            $this->db->from('students');
+            $this->db->where('students.studentID', $studentID);
+            $result = $this->db->get();
+            // echo $this->db->last_query();
+            // exit();
+            return $result->result();
+        }
+
+        function updatestudentstatusmodle(){
+            
+        }
+
         function posthistorydata($courseID, $studentID){
-                // $this->db->select("checkname.checknameID, checkname.datetime, checkname.status");
+                $this->db->select("*, concat(class.startdate, ' ', class.endtime) as datetime");
                 $this->db->from('checkname');
-                $this->db->join('class', 'class.classID = checkname.classID');
+                $this->db->join('class', 'checkname.classID = class.classID and checkname.studentID = '.$studentID, 'right');
                 $this->db->join('room','room.roomID = class.roomID');
                 $this->db->join('building','building.buildingID = room.buildingID');
-                //$this->db->group_by('checkname.courseID');  
-                // $this->db->where('class.courseID' ,$courseID);
-                // $this->db->where('class.studentID' ,$studentID);
-                // $this->db->join('checkname', 'checkname.studentID = studentsregeter.studentID');
                 $this->db->join('courses', 'courses.courseID = class.courseID');
-                // $this->db->join('checkname', 'checkname.studentID = studentsregeter.studentID');
-                
-
-                // $this->db->join('coruse', 'coruse.courseID = class.courseID');
                 $this->db->where('class.courseID', $courseID);
-                $this->db->where('checkname.studentID', $studentID);
-                
+                // $this->db->group_start();
+                $this->db->where('datetime <= ', date('y-m-d H:i:s'));
+                // $this->db->where('class.endtime <= ', date('H:i:s',time()));
+                // $this->db->group_end();
                 $result = $this->db->get();
+                // echo $this->db->last_query();
+                // exit();
                 return $result->result();
             }
 
@@ -142,23 +152,46 @@
                 $this->db->join('class', 'class.classID = checkname.classID');
                 $this->db->join('room','room.roomID = class.roomID');
                 $this->db->join('building','building.buildingID = room.buildingID');
-                //$this->db->group_by('checkname.courseID');  
-                // $this->db->where('class.courseID' ,$courseID);
-                // $this->db->where('class.studentID' ,$studentID);
-                // $this->db->join('checkname', 'checkname.studentID = studentsregeter.studentID');
                 $this->db->join('courses', 'courses.courseID = class.courseID');
-                // $this->db->join('checkname', 'checkname.studentID = studentsregeter.studentID');
-                
-
-                // $this->db->join('coruse', 'coruse.courseID = class.courseID');
                 $this->db->where('class.courseID', $courseID);
                 $this->db->where('checkname.studentID', $studentID);
-                $this->db->where_in('checkname.status', [1,2]);
-                
+                $this->db->where_in('checkname.status', [1]);           
                 $result = $this->db->get();
                 return $result->row('number');
             }
 
+            function totalPassCheckName_LateClass($courseID, $studentID){
+                $this->db->select("count(checkname.status) as number");
+                $this->db->from('checkname');
+                $this->db->join('class', 'class.classID = checkname.classID');
+                $this->db->join('room','room.roomID = class.roomID');
+                $this->db->join('building','building.buildingID = room.buildingID');
+                $this->db->join('courses', 'courses.courseID = class.courseID');
+                $this->db->where('class.courseID', $courseID);
+                $this->db->where('checkname.studentID', $studentID);
+                $this->db->where_in('checkname.status', [2]);           
+                $result = $this->db->get();
+                return $result->row('number');
+            }
+
+            function totalPassCheckName_MissClass($courseID, $studentID){
+
+                $this->db->select("count(class.classID) as number");
+                $this->db->from('checkname');
+                $this->db->join('class', 'checkname.classID = class.classID and checkname.studentID = '.$studentID, 'right');
+                $this->db->join('room','room.roomID = class.roomID');
+                $this->db->join('building','building.buildingID = room.buildingID');
+                $this->db->join('courses', 'courses.courseID = class.courseID');
+                $this->db->where('class.courseID', $courseID);
+                $this->db->where('class.startdate <= ', date('y-m-d'));
+                $this->db->where('checkname.status IS NULL', null, false);
+                $result = $this->db->get();
+                // echo $this->db->last_query();
+                // exit();
+                return $result->row('number');
+            }
+
+            
             function totalCheckName($courseID){
                 $this->db->select("count(checkname.status) as number");
                 $this->db->from('checkname');
@@ -168,19 +201,47 @@
                 return $result->row('number');
             }
 
-            function classbycourse($courseID){
-                // $datecheck = date('H:i:s');
-                // echo($datecheck);
+            function totalCheckNameByClass($courseID){
+                $this->db->select("count(class.courseID) as number");
                 $this->db->from('class');
-                // $this->db->where('class.classID', $classID);
-                $this->db->join('courses', 'courses.courseID = class.courseID');
-                
-                $this->db->where('courses.courseID', $courseID);
-                // $this->db->where('class.startdate', $datecheck);
-                // $this->('datecheck',$datecheck);
+                $this->db->where('class.courseID', $courseID);
+                $result = $this->db->get();
+                return $result->row('number');
+            }
+
+            function chacknamesutdantmodel($checknameID){
+                $this->db->from('checkname');
+                $this->db->where('checkname.checknameID', $checknameID);
                 $result = $this->db->get();
                 return $result->result();
             }
+
+            function classbycourse($courseID){
+                $this->db->select('class.classID,class.courseID,class.roomID,class.starttime,class.startdate,class.endtime,checkname.status');
+                $this->db->from('class');
+                $this->db->join('checkname', 'class.classID = checkname.classID','left');
+                $this->db->where('class.courseID', $courseID);
+                // $this->db->where('class.courseID', $courseID);
+                // $this->db->where('checkname.courseID', $courseID);
+
+                $result = $this->db->get();
+                return $result->result();
+            }
+
+
+            // function classbycourse($courseID){
+            //     // $datecheck = date('H:i:s');
+            //     // echo($datecheck);
+            //     $this->db->from('class');
+            //     // $this->db->where('class.classID', $classID);
+            //     $this->db->join('courses', 'courses.courseID = class.courseID');
+                
+            //     $this->db->where('courses.courseID', $courseID);
+            //     // $this->db->where('class.startdate', $datecheck);
+            //     // $this->('datecheck',$datecheck);
+            //     $result = $this->db->get();
+            //     return $result->result();
+            // }
 
             function getclassbycoursesModel($courseID,$classID){
                 $this->db->from('class');

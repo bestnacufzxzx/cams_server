@@ -14,6 +14,11 @@
             $this->response($result); 
         }
 
+        function shownameteacher_teacher_get(){
+            $result = $this->admin_showuser_model->shownameteacher_teacher_model();
+            $this->response($result); 
+        }
+
         function get_delete_lecturerid_get(){
             $user_id = $this->get('user_id');
             $result = $this->admin_showuser_model->delete_lecturer($user_id);

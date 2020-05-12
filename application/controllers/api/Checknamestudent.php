@@ -29,22 +29,59 @@
             $this->response($result); 
 
         }
+
+        function getnamebystudentid_post(){
+            $studentID = $this->post("user_ID");
+            $result = $this->checknamestudent_model->getnamebystudentidmodle( $studentID);
+            foreach ($result as $i => $v) {
+                $prefix = $v->prefix;
+                 $fname = $v->firstName;
+                $lname = $v->lastName;
+            }
+            
+            $fullname = [
+                'prefix' => $prefix,
+                'fname' => $fname,
+                'lname' => $lname
+            ];
+            $this->response($fullname); 
+            // $this->response($fname); 
+
+        }
+
+        function updatestudentstatus(){
+            
+        }
         
         function postHistoryChecknameByCourse_post(){
             $courseID = $this->post("courseID");
             $studentID = $this->post("user_ID");
             $result = $this->checknamestudent_model->posthistorydata($courseID, $studentID);
-            $this->response($result); 
+
+            $this->response(array('result'=>$result, 'path'=>base_url('Public/image/checkname/'))); 
         }
 
         function percent_check_name_post(){
             $courseID = $this->post("courseID");
             $studentID = $this->post("user_ID");
             $number = $this->checknamestudent_model->totalPassCheckName($courseID, $studentID);
-            $total = $this->checknamestudent_model->totalCheckName($courseID);
+            $numberLateClass = $this->checknamestudent_model->totalPassCheckName_LateClass($courseID, $studentID);
+            $numberMissClass = $this->checknamestudent_model->totalPassCheckName_MissClass($courseID, $studentID);
+            $total = $this->checknamestudent_model->totalCheckNameByClass($courseID);
             $percent = [
-                'percent' => $number*100/$total
+                'number' => $number,
+                'percent' => round(($number*100/$total),2),
+                'percentLateClass' => round(($numberLateClass*100/$total),2),
+                // 'percentMissClass' => round((($total-($numberMissClass+$numberLateClass))*100)/$total,2),
+                'percentMissClass' => round((($numberMissClass*100)/$total),2),
+                // 'percentMissClass' => round((100-(($total-($numberMissClass+$numberLateClass))*100)/$total),2),
+                'remainMissClass' => round($total-(($total*80)/100)),
+                'remain' => round(($total-(($total*80)/100))-$numberMissClass),
+                // 'remain' => (round(($total-(($total*80)/100))-$numberMissClass) > 0) ? round(($total-(($total*80)/100))-$numberMissClass) : 0,
+                'total' => $total
             ];
+            // $is_admin = ($result['permissions'] == 'admin') ? true : false;
+            // $test = $percent['percentLateClass']; // ดึงอาเร
             $this->response($percent); 
         }
 
@@ -55,9 +92,17 @@
             // $data[$key]['Course'] = $this->checknamestudent_model->gethistorycourse($value->courseID);
         }
 
+        ///ทดสอบ chack
+        function gethitbychackname(){
+            $checknameID = $this->get('checknameID');
+            $chacknamesutdant = $this->checknamestudent_model->chacknamesutdantmodel($checknameID);
+            $this->response($result);
+        }
+
         function getbycourse_get(){
             $courseID = $this->get('courseID');
             $result = $this->checknamestudent_model->classbycourse($courseID);
+            // $result = $this->checknamestudent_model->classbycourse($courseID);
             $this->response($result);
         }
 
@@ -133,19 +178,10 @@
                         "latitude" => $latitude,
                         "longitude" => $longitude
                     );
-                    
-                    // if(!$classID == $data_check && $data_check !== $studentID){
                         $result = $this->checknamestudent_model->insert($data);
                         $this->response([
                             'status' => $data_check_time
-                        ], REST_Controller::HTTP_OK);                       
-                    // }else{                  
-                    //     $this->response([
-                    //         'status' => false,
-                    //         'message' => ''
-                    //     ], REST_Controller::HTTP_CONFLICT);
-                    // }
-                
+                        ], REST_Controller::HTTP_OK);                                      
                 }
            
             
@@ -156,10 +192,5 @@
                 $result = $this->checknamestudent_model->getclassbycoursesModel($courseID,$classID);
                 $this->response($result); 
             }
-
-            // function getshowhistory(){
-            //     $classID = $this->get("classID");
-
-            // }
     }
 ?>

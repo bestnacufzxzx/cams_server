@@ -12,6 +12,11 @@
             return $result->result();
         }
 
+        function shownameteacher_teacher_model(){
+            $result = $this->db->get($this->tbl_name);
+            return $result->result();
+        }
+
        // delete_lecturerid
         function delete_lecturer($user_id){    
             $this->db->where('user_id', $user_id); 

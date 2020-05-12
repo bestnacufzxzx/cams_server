@@ -14,6 +14,15 @@
             $result = $this->db->get();
             return $result->result();
         }
+
+        function showaccountuserteacher_model(){
+            $this->db->from($this->tbl_users);
+            $this->db->join('lecturers', 'lecturers.user_id = users.user_id');
+            $result = $this->db->get();
+            return $result->result();
+        }
+
+        
         // delete accountuser
         function delete_student($studentID,$user_id){    
             $this->db->where('studentID', $studentID); 
