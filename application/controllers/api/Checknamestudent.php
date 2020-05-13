@@ -180,7 +180,7 @@
                     );
                         $result = $this->checknamestudent_model->insert($data);
                         $this->response([
-                            'status' => $data_check_time
+                            'status' => $result
                         ], REST_Controller::HTTP_OK);                                      
                 }
            
