@@ -112,5 +112,14 @@
             $result = $this->db->get('courses');
             return $result;
         }
+        function befor_update_status_role($lecturerID){
+            $this->db->from('teaching');
+            $this->db->join('lecturers', 'lecturers.lecturerID = teaching.lecturerID');
+            $this->db->join('users', 'users.user_id = lecturers.user_id');
+            $this->db->where('teaching.lecturerID', $lecturerID);
+
+            $result = $this->db->get();
+            return $result->result();
+        }
     }
 ?>

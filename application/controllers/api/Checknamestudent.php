@@ -101,7 +101,8 @@
 
         function getbycourse_get(){
             $courseID = $this->get('courseID');
-            $result = $this->checknamestudent_model->classbycourse($courseID);
+            $studentID = $this->get('studentID');
+            $result = $this->checknamestudent_model->classbycourse($courseID,$studentID);
             // $result = $this->checknamestudent_model->classbycourse($courseID);
             $this->response($result);
         }

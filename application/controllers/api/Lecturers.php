@@ -305,7 +305,19 @@
             // $lecturerID = $this->get('lecturerID');
             $courseID = $this->get('courseID');
             $result = $this->lecturers_model->getsutdentByCourses_model($courseID);
-            $this->response($result);   
+            // if($result != null){
+            //     $this->response([
+            //         'status' => true,
+            //         'response' => $result
+            //     ], REST_Controller::HTTP_OK); 
+            // }else{
+            //     $res = [
+            //         'status' => false
+            //     ];
+            //     $this->response($res); 
+            // }
+            $this->response($result); 
+
         }
         // get student 
         function get_all_sutdentByCourses_get(){
@@ -319,12 +331,15 @@
             $studentID = $this->post('studentID');
             $resulcourseIDbystudent = $this->lecturers_model->get_all_studentsregeter_sutdentByCourses_model($courseID,$studentID);
 
-            if(!$resulcourseIDbystudent == $courseID && !$resulcourseIDbystudent == $studentID){
-                $data = array(
-                    "courseID"=> $courseID,
-                    "studentID" => $studentID
-    
-                );
+            if(sizeof($resulcourseIDbystudent) == 0){
+                $data = [];
+                foreach ($studentID as $row) {
+                    $temp_data = array(
+                        "courseID"=> $courseID,
+                        "studentID" => $row
+                    );
+                    array_push($data, $temp_data);
+                }
                 $result = $this->lecturers_model->insert_studentByCourses_model($data);
                 $this->response($resulcourseIDbystudent); 
             }else{

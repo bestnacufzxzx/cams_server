@@ -216,15 +216,21 @@
                 return $result->result();
             }
 
-            function classbycourse($courseID){
-                $this->db->select('class.classID,class.courseID,class.roomID,class.starttime,class.startdate,class.endtime,checkname.status');
-                $this->db->from('class');
-                $this->db->join('checkname', 'class.classID = checkname.classID','left');
+            function classbycourse($courseID,$studentID){
+                $this->db->select("*, concat(class.startdate, ' ', class.endtime) as datetime");
+                $this->db->from('checkname');
+                $this->db->join('class', 'checkname.classID = class.classID and checkname.studentID = '.$studentID, 'right');
+                $this->db->join('room','room.roomID = class.roomID');
+                $this->db->join('building','building.buildingID = room.buildingID');
+                $this->db->join('courses', 'courses.courseID = class.courseID');
                 $this->db->where('class.courseID', $courseID);
-                // $this->db->where('class.courseID', $courseID);
-                // $this->db->where('checkname.courseID', $courseID);
-
+                // $this->db->group_start();
+                // $this->db->where('datetime <= ', date('y-m-d H:i:s'));
+                // $this->db->where('class.endtime <= ', date('H:i:s',time()));
+                // $this->db->group_end();
                 $result = $this->db->get();
+                // echo $this->db->last_query();
+                // exit();
                 return $result->result();
             }
 
@@ -239,6 +245,14 @@
             //     $this->db->where('courses.courseID', $courseID);
             //     // $this->db->where('class.startdate', $datecheck);
             //     // $this->('datecheck',$datecheck);
+            //     $result = $this->db->get();
+            //     return $result->result();
+            // }
+
+            // function classbycourse($studentID,$courseID){
+            //     $this->db->from('studentsregeter');
+            //     $this->db->join('class', 'class.courseID = studentsregeter.courseID');
+            //     // $this->db->where('class.courseID', $courseID);
             //     $result = $this->db->get();
             //     return $result->result();
             // }

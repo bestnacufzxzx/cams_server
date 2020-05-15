@@ -253,18 +253,21 @@
                 $arrStudent[] = $row->studentID;
             }
             $this->db->from('students');
-            $this->db->where_not_in('studentID', $arrStudent);
+            if(!empty($arrStudent)){
+                $this->db->where_not_in('studentID', $arrStudent);
+            }
             $result = $this->db->get();
             return $result->result();
         }
+
         function insert_studentByCourses_model($data){
-            return $this->db->insert('studentsregeter', $data);
+            return $this->db->insert_batch('studentsregeter', $data);
         }
 
         function get_all_studentsregeter_sutdentByCourses_model($courseID,$studentID){
             $this->db->from('studentsregeter');
             $this->db->where('courseID', $courseID);
-            $this->db->where('studentID', $studentID);
+            $this->db->where_in('studentID', $studentID);
             $result = $this->db->get();
             return $result->result();
         }

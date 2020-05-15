@@ -16,6 +16,42 @@
 
         }
 
+        function get_id_getcourses_get(){
+            $courseID = $this->get('courseID');
+            $result = $this->admin_showcourse_model->get_id_getcourses($courseID);
+            $this->response($result); 
+        }
+
+        function get_id_getcourses_update_post(){
+            $courseID = $this->post('courseID');
+            $courseCode = $this->post('courseCode');
+            $courseName = $this->post('courseName');
+
+            $chack = $this->admin_showcourse_model->get_chack_befor_update_model($courseCode,$courseName);
+            foreach ($chack as $v) {
+              $courseC = $v->courseCode;
+              $courseN = $v->courseName;
+            }
+            $date = [
+                'courseID' => $courseID,
+                'courseCode' => $courseCode,
+                'courseName' => $courseName,
+            ];
+            if($courseCode != $courseC){
+                $result = $this->admin_showcourse_model->get_id_getcourses_update_model($date);
+                $this->response([
+                    'status' => true,
+                    'response' => $result
+                ],REST_Controller::HTTP_OK);
+            }else{
+                $this->response([
+                    'status' => false,
+                    'message' => ''
+                ], REST_Controller::HTTP_CONFLICT);
+            }
+
+        }
+
         function delete_get(){
             $teachingID = $this->get('teachingID');
             $result = $this->admin_showcourse_model->delete_teaching($teachingID);

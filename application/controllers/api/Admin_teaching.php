@@ -81,6 +81,13 @@
             $befor_chack_datas = $this->admin_teaching_model->befor_chack_data($courseID,$lecturerID);
             $befor_chack_data_teachings = $this->admin_teaching_model->befor_chack_data_teaching($courseID,$lecturerID);
 
+            // befor update status role => chack table users and teaching
+                $befor_status_role = $this->admin_teaching_model->befor_update_status_role($lecturerID);
+                foreach ($befor_status_role as $i => $v) {
+                    $chack_roleID = $v->roleID;
+                }
+            // end
+
             foreach ($befor_chack_datas as $befor_chack_data) {
                 $befor_datas = array(
                     "teachingID" => $befor_chack_data->teachingID,
@@ -137,17 +144,30 @@
                     );
                 }
 
-            if($befor_datas == false ){
-                $update_roleID_User_model = $this->admin_teaching_model->insert($courseID,$lecturerID,$roleID);
-                $resultchackdate = $this->admin_teaching_model->update_roleID_User_model($data_chacks);
-                $resultchackdate = $resultchackdate;
+                if($befor_datas == false ){
+                    $update_roleID_User_model = $this->admin_teaching_model->insert($courseID,$lecturerID,$roleID);
+                    $resultchackdate = $this->admin_teaching_model->update_roleID_User_model($data_chacks);
+                    $resultchackdate = $resultchackdate;
 
-            }else{
-                $update_roleID_User_model = $this->admin_teaching_model->update_roleID_teaching($befor_datas_teachings);
-                $resultchackdate = $this->admin_teaching_model->update_roleID_User_model($data_chacks);
-            }
+                }else{
+                    $update_roleID_User_model = $this->admin_teaching_model->update_roleID_teaching($befor_datas_teachings);
+                    $resultchackdate = $this->admin_teaching_model->update_roleID_User_model($data_chacks);
+                }
+                
             
-            // if($resultchackdates == false && ($roleID =='4' || $roleID =='3' || $roleID =='5')){ 
+            }
+             
+            $this->response([
+                'status' => true,
+                'response' => $resultchackdate,
+                'message' => 'บันทึกสำเร็จ'
+            ],REST_Controller::HTTP_OK);
+            
+        }
+        
+    }
+
+     // if($resultchackdates == false && ($roleID =='4' || $roleID =='3' || $roleID =='5')){ 
             //     if($befor_chack_data == true || $befor_chack_data == true || $befor_chack_data == true){          
             //         $update_roleID_User_model = $this->admin_teaching_model->update_roleID_teaching($get_data);
             //         $resultchackdate = $this->admin_teaching_model->update_roleID_User_model($data_chacks);
@@ -174,14 +194,3 @@
             //         'message' => 'ไม่สามารถสร้างอาจารย์ผู้ประสานรายวิชาหรืออาจารย์ผู้สอนได้เนื่องจากมีสถานะเป็นอาจารย์ผู้ประสานรายวิชาและอาจารย์ผู้สอนอยู่แล้ว'
             //         ], REST_Controller::HTTP_CONFLICT);
             // }
-            }
-             
-            $this->response([
-                'status' => true,
-                'response' => $resultchackdate,
-                'message' => 'บันทึกสำเร็จ'
-            ],REST_Controller::HTTP_OK);
-            
-        }
-        
-    }

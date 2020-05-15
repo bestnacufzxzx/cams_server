@@ -10,6 +10,28 @@
             return $result->result();   //result คือ อาเรย์ of object
         }
 
+        function get_id_getcourses($courseID){
+            $this->db->select('courses.courseID, courses.courseCode, courses.courseName');
+            $this->db->from('courses');
+            $this->db->where('courses.courseID', $courseID);
+            $result = $this->db->get();
+            return $result->result();
+        }
+        function get_chack_befor_update_model($courseCode,$courseName){
+            $this->db->from('courses');
+            $this->db->where('courses.courseCode', $courseCode);
+            $this->db->where('courses.courseName', $courseName);
+            $result = $this->db->get();
+            return $result->result();
+        }
+
+        function get_id_getcourses_update_model($data){
+            $this->db->where('courseID',$data['courseID']);
+            $this->db->update($this->tbl_name,$data);
+            $result = $this->db->get($this->tbl_name);
+            return $result;
+        }
+
         function delete_teaching($teachingID){    
             $this->db->where('teachingID', $teachingID); 
             return $this->db->delete('teaching');  
