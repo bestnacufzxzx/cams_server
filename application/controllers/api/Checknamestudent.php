@@ -163,7 +163,7 @@
                 $data = base64_decode($img);
                 $imageName = uniqid().'.png';
                 $file = $config['upload_path']. '/'. $imageName;
-                $success = file_put_contents($file, $data);
+                $success  = file_put_contents($file, $data);
                 
 
                 if (!$success){

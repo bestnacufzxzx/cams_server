@@ -138,6 +138,7 @@
                 $this->db->where('class.courseID', $courseID);
                 // $this->db->group_start();
                 $this->db->where('datetime <= ', date('y-m-d H:i:s'));
+                // $this->db->where('datetime <= ', date('Y-m-d H:i:s', strtotime('2011-08-10 20:40:12')));
                 // $this->db->where('class.endtime <= ', date('H:i:s',time()));
                 // $this->db->group_end();
                 $result = $this->db->get();
