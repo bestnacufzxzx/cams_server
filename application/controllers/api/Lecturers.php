@@ -7,6 +7,7 @@
         {
             parent::__construct();
             $this->load->model('lecturers_model');
+            $this->load->model('checknamestudent_model');
             
         }
 
@@ -234,10 +235,85 @@
         // git history by Timetreatment
         function gethistorytimetreatment_get(){
             $courseID = $this->get('courseID');
-            $lecturerID = $this->get('lecturerID');
-            $result = $this->lecturers_model->historystudentabycoursesmodel($courseID);
-            $this->response($result); 
+            // $lecturerID = $this->get('lecturerID');
+            // $result = $this->lecturers_model->historystudentabycoursesmodel($courseID);
+            $result = [];
+            $result['schedule'] = $this->get_couresbyclass($courseID);
+            $student = $this->get_studentsincoures($courseID);
+            $studentRatting = [];
+            foreach ($student as $key => $v) {
+                $studentRatting[$v->studentID] = $this->get_idstudentandcoures($courseID, $v->studentID);
+            }
+            $checkArray = [];
+            foreach ($student as $key => $v) {
+                $checkArray[$v->studentID] = $this->receive_idstudentandcouresgetclassteaching($courseID, $v->studentID);
+            }
+            $result['student'] = $student;
+            $result['rating'] = $studentRatting;
+            $result['check'] = $checkArray;
+            $this->response($result, REST_Controller::HTTP_OK); 
         }
+
+        // starttime 20/5/62
+        // รับค่า id นักศึกษา กับรายวิชา => เข้าเรียน มาสาย ขาดเรียน
+        function get_idstudentandcoures($courseID,$studentID){
+            // $courseID = $this->get("courseID");
+            // $studentID = $this->get("studentID");
+            $number = $this->checknamestudent_model->totalPassCheckName($courseID, $studentID);
+            $numberLateClass = $this->checknamestudent_model->totalPassCheckName_LateClass($courseID, $studentID);
+            $numberMissClass = $this->checknamestudent_model->totalPassCheckName_MissClass($courseID, $studentID);
+            $total = $this->checknamestudent_model->totalCheckNameByClass($courseID);
+            $percent = [
+                'percentattendclass' => round(($number*100/$total),2),
+                'percentLateClass' => round(($numberLateClass*100/$total),2),
+                'percentMissClass' => round((($numberMissClass*100)/$total),2),
+            ];
+            return $percent;
+        }
+
+        function receive_idstudentandcouresgetclassteaching($courseID,$studentID){
+            // $courseID = $this->get("courseID");
+            // $studentID = $this->get("studentID");
+            $result = $this->lecturers_model->receive_idstudentandcouresgetclassteaching_model($courseID,$studentID);
+            return $result;
+        }
+
+        function get_studentsincoures($courseID){
+            // $courseID = $this->get("courseID");
+            $result = $this->lecturers_model->get_studentsincoures_model($courseID);
+            return $result;
+        }
+        function get_couresbyclass($courseID){
+            // $courseID = $this->get("courseID");
+            $result = $this->lecturers_model->get_couresbyclass_model($courseID);
+            return $result;
+        }
+        // endtime
+        // 
+        function percent_check_name_get(){
+            $courseID = $this->get("courseID");
+            $studentID = $this->get("studentID");
+            // $result = $this->lecturers_model->percent_check_name_model($courseID,$studentID);
+            $number = $this->checknamestudent_model->totalPassCheckName($courseID, $studentID);
+            $numberLateClass = $this->checknamestudent_model->totalPassCheckName_LateClass($courseID, $studentID);
+            $numberMissClass = $this->checknamestudent_model->totalPassCheckName_MissClass($courseID, $studentID);
+            $total = $this->checknamestudent_model->totalCheckNameByClass($courseID);
+            $percent = [
+                'number' => $number,
+                'percent' => round(($number*100/$total),2),
+                'percentLateClass' => round(($numberLateClass*100/$total),2),
+                // 'percentMissClass' => round((($total-($numberMissClass+$numberLateClass))*100)/$total,2),
+                'percentMissClass' => round((($numberMissClass*100)/$total),2),
+                // 'percentMissClass' => round((100-(($total-($numberMissClass+$numberLateClass))*100)/$total),2),
+                'remainMissClass' => round($total-(($total*80)/100)),
+                'remain' => round(($total-(($total*80)/100))-$numberMissClass),
+                // 'remain' => (round(($total-(($total*80)/100))-$numberMissClass) > 0) ? round(($total-(($total*80)/100))-$numberMissClass) : 0,
+                'total' => $total
+            ];
+            $this->response($percent); 
+            // $this->response($result); 
+        }
+        //
 
         // get room
         function getroom_get(){

@@ -198,6 +198,15 @@
             return $result->result();
         }
 
+        // get historystudentID 
+        function historystudentIDbycoursesmodel($courseID){
+            $this->db->select('studentsregeter.studentID');
+            $this->db->from('studentsregeter');
+            $this->db->join('students', 'students.studentID = studentsregeter.studentID');
+            $this->db->where('studentsregeter.courseID', $courseID);
+            $result = $this->db->get();
+            return $result->result();
+        }
         // historystudentabycoursesmodel
         function historystudentabycoursesmodel($courseID){
             $this->db->from('studentsregeter');
@@ -206,7 +215,70 @@
             $result = $this->db->get();
             return $result->result();
         }
+        //
+        function percent_check_name_model($courseID,$studentID){
+            $this->db->select("*, concat(class.startdate, ' ', class.endtime) as datetime");
+            $this->db->from('checkname');
+            $this->db->join('class', 'checkname.classID = class.classID and checkname.studentID = '.$studentID, 'right');
+            $this->db->join('room','room.roomID = class.roomID');
+            $this->db->join('building','building.buildingID = room.buildingID');
+            $this->db->join('courses', 'courses.courseID = class.courseID');
+            $this->db->where('class.courseID', $courseID);
+            // $this->db->group_start();
+            // $this->db->where('datetime <= ', date('y-m-d H:i:s'));
+            // $this->db->where('class.endtime <= ', date('H:i:s',time()));
+            // $this->db->group_end();
+            $result = $this->db->get();
+            // echo $this->db->last_query();
+            // exit();
+            return $result->result();
+        }
+        //
+    // start time 20/5/63
+        //get id student and coures รับค่า id นักศึกษา กับรายวิชา => เข้าเรียน มาสาย ขาดเรียน
+        function get_idstudentandcoures_model($courseID,$studentID){
+            $this->db->select("*, concat(class.startdate, ' ', class.endtime) as datetime");
+            $this->db->from('checkname');
+            $this->db->join('class', 'checkname.classID = class.classID and checkname.studentID = '.$studentID, 'right');
+            $this->db->join('room','room.roomID = class.roomID');
+            $this->db->join('building','building.buildingID = room.buildingID');
+            $this->db->join('courses', 'courses.courseID = class.courseID');
+            $this->db->where('class.courseID', $courseID);
+            $result = $this->db->get();
+            // echo $this->db->last_query();
+            // exit();
+            return $result->result();
+        }
+        // end
 
+        // set id and coures ส่ง id นศ กับ รายวิชา ดึงคาบเรียนแจ่ละคาบออกมาพร้อมบอกแต่ละคาบ มาสาย เข้าเรียน หรือ ขาดเรียน ออกมา
+        function receive_idstudentandcouresgetclassteaching_model($courseID,$studentID){
+            $this->db->from('checkname');
+            $this->db->join('class', 'checkname.classID = class.classID and checkname.studentID = '.$studentID, 'right');
+            $this->db->where('class.courseID', $courseID);
+            $result = $this->db->get();
+            return $result->result();
+        }
+        //
+        // ดึงนักศึกษาทุกคนในรายวิชา
+        function get_studentsincoures_model($courseID){
+            $this->db->from('courses');
+            $this->db->join('studentsregeter', 'studentsregeter.courseID = courses.courseID');
+            $this->db->join('students', 'students.studentID = studentsregeter.studentID');
+            $this->db->where('studentsregeter.courseID', $courseID);
+            $result = $this->db->get();
+            return $result->result();
+        }
+        // รับรายวิชานี้แล้วดึงคาบทั้งหมด
+        function get_couresbyclass_model($courseID){
+            $this->db->from('courses');
+            $this->db->join('class', 'class.courseID = courses.courseID');
+            $this->db->where('class.courseID', $courseID);
+            $result = $this->db->get();
+            return $result->result();
+        }
+        //
+    // endtime
         // getroom
         function getAllroom(){
             $this->db->from('room');
