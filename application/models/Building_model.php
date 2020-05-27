@@ -32,5 +32,17 @@ class Building_model extends CI_Model {
         return $result->result();
 
     }
+    function check_before($buildingName,$roomname){
+        $this->db->from('building');
+        $this->db->join('room', 'room.buildingID = building.buildingID');
+        $this->db->where('room.roomname', $roomname);
+        $this->db->where('building.buildingName', $buildingName);
+        $result = $this->db->get();
+        if($result){
+            return $result->result();
+        }else{
+            return $result->result();
+        }
+    }
 
 }

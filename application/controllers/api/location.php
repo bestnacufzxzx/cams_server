@@ -6,6 +6,7 @@ class location extends BD_Controller{
     {    
         parent::__construct();
         $this->load->model('location_model');
+        $this->load->model('building_model');
     }
     
     function create_post(){
@@ -30,28 +31,37 @@ class location extends BD_Controller{
             'buildingName' => $this->post("buildingName")
         );
 
-        $result = $this->location_model->insertdata($data);
+        $check = $this->building_model->check_before($buildingName,$roomname);
+        if($check != true){
+            $result = $this->location_model->insertdata($data);
 
-        if ($result != null)
-            {
-                $this->response([
-                    'status' => true,
-                    'response' => $result
-                ], REST_Controller::HTTP_OK); 
-            }else{
-            //error
-                $this->response([
-                    'status' => false,
-                    'message' => ''
-                ], REST_Controller::HTTP_CONFLICT);
-            }
-        
+            if ($result != null)
+                {
+                    $this->response([
+                        'status' => true,
+                        'response' => $result
+                    ], REST_Controller::HTTP_OK); 
+                }else{
+                //error
+                    $this->response([
+                        'status' => false,
+                        'message' => ''
+                    ], REST_Controller::HTTP_CONFLICT);
+                }
+        }else{
+            $this->response([
+                'status' => false,
+                'message' => ''
+            ], REST_Controller::HTTP_CONFLICT);
+        }
+               
         /*error
         $this->response([
             'stetus' => false,
             'massage' => $result
         ], REST_Controller::HTTP_CONFLICT);*/
     }
+
 
     function get_all_get(){         // all_get || all_post || all_delete
         $result = $this->location_model->get_all();
