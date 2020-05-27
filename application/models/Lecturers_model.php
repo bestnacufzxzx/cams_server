@@ -55,6 +55,17 @@
         //     return $result->result();
         // }
 
+        // ดึง class  แสดง
+        function getparamdataclassbyclassIDmodel($classID){
+            $this->db->from('class');
+            $this->db->join('room', 'room.roomID = class.roomID');
+            $this->db->join('building', 'building.buildingID = room.buildingID');
+
+            $this->db->where('class.classID', $classID);
+            $result = $this->db->get();
+            return $result->result();
+        }
+
         /// เริ่ม
         function getlecturersbyCoursemodel($courseID){
             $this->db->from('courses');
@@ -81,10 +92,12 @@
             $result = $this->db->get();
             return $result->result();
         }
-
+        // 
         function getCourseByteachingNoRolemodel($lecturerID){
             $this->db->from('teaching');
+            // $this->db->join('courses', 'teaching.courseID = courses.courseID and teaching.lecturerID = '.$lecturerID, 'right');
             $this->db->join('courses', 'courses.courseID = teaching.courseID');
+            // $this->db->join('class', 'class.courseID = courses.courseID');
             $this->db->where('teaching.lecturerID', $lecturerID);
             $result = $this->db->get();
             return $result->result();
@@ -151,6 +164,13 @@
                 }else{
                     return true; 
                 }
+        }
+
+        function updatedatacreateclassbyTeachs($data){
+            $this->db->where('classID',$data['classID']);
+            $this->db->update('class',$data);
+            $result = $this->db->get('class');
+            return $result;
         }
 
         function insertdatacreateclassbyTeachs($data){

@@ -83,7 +83,12 @@
             $this->response($result); 
         }
 
-
+        // ดึง class  แสดง
+        function getparamdataclassbyclassID_get(){
+            $classID = $this->get('classID');
+            $result = $this->lecturers_model->getparamdataclassbyclassIDmodel($classID);
+            $this->response($result); 
+        }
 
         ///เริ่ม 
         function getlecturersbyCourse_get(){
@@ -146,6 +151,41 @@
             $students = $this->get('students');
             $result = $this->lecturers_model->getstudentbycouresmodel();
             $this->response($result);
+        }
+        // update กำหนดการเรียนการสอน Teachs
+        function updateclassbyTeachs_post(){
+            $classID = $this->post('classID');
+            $courseID = $this->post('courseID');
+            $roomID = $this->post('roomID');
+            $starttime = $this->post('starttime');
+            $endtime = $this->post('endtime');
+            $startdate = $this->post('startdate');
+            $startcheck = $this->post('startcheck');
+            $endcheck = $this->post('endcheck');
+
+            $data = array(
+                'classID' => $this->post('classID'),
+                'courseID' => $this->post('courseID'),
+                'roomID' => $this->post('roomID'),
+                'starttime' => $this->post('starttime'),
+                'endtime' => $this->post('endtime'),
+                'startdate' => $this->post('startdate'),
+                'startcheck' => $this->post('startcheck'),
+                'endcheck' => $this->post('endcheck'),
+            );
+            $result = $this->lecturers_model->updatedatacreateclassbyTeachs($data);
+            $this->response($result); 
+
+            if( $result == true){
+                $this->response([
+                    'status' => true,
+                    'response' => $result
+                ],REST_Controller::HTTP_OK);
+            }else{
+                $this->response([
+                    'status' => false,
+                    'message' => ''
+                ], REST_Controller::HTTP_CONFLICT);            }
         }
         // insert กำหนดการเรียนการสอน Teachs
         function createclassbyTeachs_post(){
@@ -263,12 +303,22 @@
             $numberLateClass = $this->checknamestudent_model->totalPassCheckName_LateClass($courseID, $studentID);
             $numberMissClass = $this->checknamestudent_model->totalPassCheckName_MissClass($courseID, $studentID);
             $total = $this->checknamestudent_model->totalCheckNameByClass($courseID);
-            $percent = [
-                'percentattendclass' => round(($number*100/$total),2),
-                'percentLateClass' => round(($numberLateClass*100/$total),2),
-                'percentMissClass' => round((($numberMissClass*100)/$total),2),
-            ];
-            return $percent;
+            if(!empty($total)){
+                $percent = [
+                    'percentattendclass' => round(($number*100/$total),2),
+                    'percentLateClass' => round(($numberLateClass*100/$total),2),
+                    'percentMissClass' => round((($numberMissClass*100)/$total),2),
+                ];
+                return $percent;
+            }else{
+                $percent = [
+                    'percentattendclass' => "ยังไม่มีประวัติคะแนน",
+                    'percentLateClass' => "ยังไม่มีประวัติคะแนน",
+                    'percentMissClass' => "ยังไม่มีประวัติคะแนน",
+                ];
+                return $percent;
+            }
+
         }
 
         function receive_idstudentandcouresgetclassteaching($courseID,$studentID){
